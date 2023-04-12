@@ -12,32 +12,11 @@ import (
 
 const (
 	path          = "../../tmp"
-	recursivePath = "../../tmp/tmp1/tmp2"
+	recursivePath = "../../tmp/tmp2/tmp3"
 )
 
 func TestCreatePathIfNotExist(t *testing.T) {
 	t.Run("if dir exists it simply exits without error", func(t *testing.T) {
-		t.Run("non-recursive path", func(t *testing.T) {
-			//arrange
-			err := os.Mkdir(path, os.ModePerm)
-			if err != nil {
-				log.Fatalln(err)
-			}
-
-			//act
-			sut := localstorage.NewLocalStorage()
-			err = sut.CreatePathIfNotExist(path)
-
-			//assert
-			assert.NoError(t, err)
-
-			//tearup
-			err = os.RemoveAll(path)
-			if err != nil {
-				log.Fatal(err)
-			}
-		})
-
 		t.Run("recursive path", func(t *testing.T) {
 			//arrange
 			err := os.MkdirAll(recursivePath, os.ModePerm)
@@ -54,6 +33,28 @@ func TestCreatePathIfNotExist(t *testing.T) {
 
 			//tearup
 			err = os.RemoveAll(recursivePath)
+			if err != nil {
+				log.Fatal(err)
+			}
+
+		})
+
+		t.Run("non-recursive path", func(t *testing.T) {
+			//arrange
+			err := os.MkdirAll(path, os.ModePerm)
+			if err != nil {
+				log.Fatalln(err)
+			}
+
+			//act
+			sut := localstorage.NewLocalStorage()
+			err = sut.CreatePathIfNotExist(path)
+
+			//assert
+			assert.NoError(t, err)
+
+			//tearup
+			err = os.RemoveAll(path)
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -80,6 +81,7 @@ func TestCreatePathIfNotExist(t *testing.T) {
 			if err != nil {
 				log.Fatal(err)
 			}
+
 		})
 
 		t.Run("recursive", func(t *testing.T) {
@@ -97,7 +99,7 @@ func TestCreatePathIfNotExist(t *testing.T) {
 			assert.NoError(t, err)
 
 			//tearup
-			err = os.RemoveAll(recursivePath)
+			err = os.RemoveAll(path)
 			if err != nil {
 				log.Fatal(err)
 			}
