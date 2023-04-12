@@ -25,5 +25,10 @@ func (s *localstorage) CreatePathIfNotExist(path string) (err error) {
 		return
 	}
 
+	//the path does not exist so we create one
+	if err = os.Mkdir(path, os.ModePerm); err != nil {
+		return
+	}
+
 	return
 }

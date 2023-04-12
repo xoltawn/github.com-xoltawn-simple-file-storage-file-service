@@ -35,4 +35,25 @@ func TestCreatePathIfNotExist(t *testing.T) {
 			log.Fatal(err)
 		}
 	})
+
+	t.Run("if dir not exists it simply then we create it", func(t *testing.T) {
+		//arrange
+		err := os.RemoveAll(path)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		//act
+		sut := localstorage.NewLocalStorage()
+		err = sut.CreatePathIfNotExist(path)
+
+		//assert
+		assert.NoError(t, err)
+
+		//tearup
+		err = os.RemoveAll(path)
+		if err != nil {
+			log.Fatal(err)
+		}
+	})
 }
