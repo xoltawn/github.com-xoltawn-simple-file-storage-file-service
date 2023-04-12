@@ -3,6 +3,7 @@ module github.com/xoltawn/simple-file-storage-file-service
 go 1.19
 
 require (
+	github.com/google/uuid v1.3.0
 	github.com/stretchr/testify v1.8.2
 	github.com/xoltawn/simple-file-storage-sharedparts v0.1.0
 )

@@ -1,13 +1,16 @@
 package localstorage_test
 
 import (
+	"context"
 	"log"
 	"os"
 	"testing"
 
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/xoltawn/simple-file-storage-file-service/repository/localstorage"
+	_domain "github.com/xoltawn/simple-file-storage-sharedparts/domain"
 )
 
 const (
@@ -94,6 +97,54 @@ func TestCreatePathIfNotExist(t *testing.T) {
 			//act
 			sut := localstorage.NewLocalStorage()
 			err = sut.CreatePathIfNotExist(recursivePath)
+
+			//assert
+			assert.NoError(t, err)
+
+			//tearup
+			err = os.RemoveAll(path)
+			if err != nil {
+				log.Fatal(err)
+			}
+		})
+	})
+}
+
+func TestSaveFile(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		t.Run("non-recursive", func(t *testing.T) {
+			//arrange
+			fileBytes := []byte{}
+			fileInto := &_domain.File{
+				LocalName:     uuid.New().String(),
+				FileExtension: "png",
+			}
+
+			//act
+			sut := localstorage.NewLocalStorage()
+			err := sut.SaveFile(context.TODO(), fileBytes, fileInto, path)
+
+			//assert
+			assert.NoError(t, err)
+
+			//tearup
+			err = os.RemoveAll(path)
+			if err != nil {
+				log.Fatal(err)
+			}
+		})
+
+		t.Run("recursive", func(t *testing.T) {
+			//arrange
+			fileBytes := []byte{}
+			fileInto := &_domain.File{
+				LocalName:     uuid.New().String(),
+				FileExtension: "png",
+			}
+
+			//act
+			sut := localstorage.NewLocalStorage()
+			err := sut.SaveFile(context.TODO(), fileBytes, fileInto, recursivePath)
 
 			//assert
 			assert.NoError(t, err)

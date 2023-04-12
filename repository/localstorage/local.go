@@ -2,6 +2,7 @@ package localstorage
 
 import (
 	"context"
+	"fmt"
 	"os"
 
 	"github.com/xoltawn/simple-file-storage-sharedparts/domain"
@@ -16,6 +17,16 @@ func NewLocalStorage() *localstorage {
 }
 
 func (s *localstorage) SaveFile(ctx context.Context, fileBytes []byte, fileInfo *domain.File, path string) (err error) {
+	err = s.CreatePathIfNotExist(path)
+	if err != nil {
+		return
+	}
+
+	err = os.WriteFile(fmt.Sprint(path, "/", fileInfo.LocalName, ".", fileInfo.FileExtension), fileBytes, 0644)
+	if err != nil {
+		return
+	}
+
 	return
 }
 
