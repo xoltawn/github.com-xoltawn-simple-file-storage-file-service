@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: registry.docker.ir/library/postgres:${PSQL_DOCKER_IMAGE_TAG}
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    networks: 
+      - simple-file-storage
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    networks: 
+      - simple-file-storage
+
+networks:
+  simple-file-storage:
+    name: simple-file-storage
+    external: true    
