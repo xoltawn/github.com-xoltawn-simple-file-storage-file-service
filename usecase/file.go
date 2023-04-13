@@ -18,6 +18,14 @@ func NewFileUsecase(fileStorage domain.FileStorage, fileRepo domain.FileReposito
 
 func (f *fileUsecase) SaveFile(ctx context.Context, fileBytes []byte, fileInfo *domain.File) (err error) {
 	err = f.fileStorage.SaveFile(ctx, fileBytes, fileInfo, f.imagesPath)
+	if err != nil {
+		return
+	}
+
+	err = f.fileRepo.SaveFile(ctx, fileInfo)
+	if err != nil {
+		return
+	}
 	return
 }
 
