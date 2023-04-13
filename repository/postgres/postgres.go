@@ -31,3 +31,8 @@ func (r *filePostgresRepository) SaveFile(ctx context.Context, fileInfo *domain.
 
 	return
 }
+
+func (r *filePostgresRepository) FetchFiles(ctx context.Context, limit, offset int) (files []domain.File, err error) {
+	tx := r.db.Limit(limit).Offset(offset).Find(&files)
+	return files, tx.Error
+}

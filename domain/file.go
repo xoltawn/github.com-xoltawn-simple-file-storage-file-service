@@ -3,6 +3,8 @@ package domain
 import (
 	"context"
 	"errors"
+
+	"github.com/xoltawn/simple-file-storage-sharedparts/domain"
 )
 
 var (
@@ -31,6 +33,7 @@ type FileStorage interface {
 // FileRepository ...
 type FileRepository interface {
 	SaveFile(ctx context.Context, fileInfo *File) (err error)
+	FetchFiles(ctx context.Context, limit, offset int) (files []domain.File, err error)
 }
 
 // FileUsecase ...
