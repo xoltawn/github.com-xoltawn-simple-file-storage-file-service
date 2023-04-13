@@ -3,6 +3,7 @@ package domain
 import (
 	"context"
 	"errors"
+	"io"
 )
 
 var (
@@ -57,7 +58,7 @@ type FileUsecase interface {
 //
 //go:generate mockgen --destination=mocks/bytes_to_links_convertor.go . BytesToLinksConvertor
 type BytesToLinksConvertor interface {
-	Parse([]byte) ([]string, error)
+	Convert([]byte) ([]string, error)
 }
 
 // LinkValidator is reponsible for checking whether the given text file is a valid link
@@ -65,4 +66,11 @@ type BytesToLinksConvertor interface {
 //go:generate mockgen --destination=mocks/link_validator.go . LinkValidator
 type LinkValidator interface {
 	IsLink(txt string) (result bool)
+}
+
+// BytesToReaderConvertor is reponsible for converting []byte to io.Reader
+//
+//go:generate mockgen --destination=mocks/bytes_to_links_convertor.go . BytesToLinksConvertor
+type BytesToReaderConvertor interface {
+	Convert([]byte) (reader io.Reader, err error)
 }

@@ -8,6 +8,6 @@ func NewBytesToLinksConvertor() *bytesToLinksConvertor {
 	return &bytesToLinksConvertor{}
 }
 
-func (c *bytesToLinksConvertor) Parse([]byte) (links []string, err error) {
+func (c *bytesToLinksConvertor) Convert([]byte) (links []string, err error) {
 	return
 }
