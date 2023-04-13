@@ -48,4 +48,19 @@ func TestSaveFile(t *testing.T) {
 		//assert
 		assert.Error(t, expErr, err)
 	})
+
+	t.Run("if no error occurres, then return nil", func(t *testing.T) {
+		//arrange
+		fileStorage := _mocks.NewMockFileStorage(ctrl)
+		fileStorage.EXPECT().SaveFile(context.TODO(), gomock.Any(), gomock.Any(), gomock.Any()).Return(nil)
+		fileRepo := _mocks.NewMockFileRepository(ctrl)
+		fileRepo.EXPECT().SaveFile(context.TODO(), gomock.Any()).Return(nil)
+
+		//act
+		sut := usecase.NewFileUsecase(fileStorage, fileRepo, imagesPath)
+		err := sut.SaveFile(context.TODO(), fileBytes, &file)
+
+		//assert
+		assert.NoError(t, err)
+	})
 }
