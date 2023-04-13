@@ -10,11 +10,8 @@ func NewLinkValidator() *linkValidator {
 	return &linkValidator{}
 }
 
-func (c *linkValidator) Parse([]byte) (links []string, err error) {
-	return
-}
-
 func (c *linkValidator) IsLink(txt string) (result bool) {
+	txt = strings.Trim(txt, " ")
 	if strings.HasPrefix(txt, "http://") || strings.HasPrefix(txt, "https://") {
 		return true
 	}

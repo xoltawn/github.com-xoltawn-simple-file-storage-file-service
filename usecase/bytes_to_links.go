@@ -1,20 +1,36 @@
 package usecase
 
-import "github.com/xoltawn/simple-file-storage-file-service/domain"
+import (
+	"bufio"
+
+	"github.com/xoltawn/simple-file-storage-file-service/domain"
+)
 
 type bytesToLinksConvertor struct {
 	bytesToReaderConvertor domain.BytesToReaderConvertor
+	linkValidator          domain.LinkValidator
 }
 
 // NewBytesToLinksConvertor is the builder function for BytesToLinksConvertor
-func NewBytesToLinksConvertor(bytesToReaderConvertor domain.BytesToReaderConvertor) *bytesToLinksConvertor {
-	return &bytesToLinksConvertor{bytesToReaderConvertor: bytesToReaderConvertor}
+func NewBytesToLinksConvertor(bytesToReaderConvertor domain.BytesToReaderConvertor, linkValidator domain.LinkValidator) *bytesToLinksConvertor {
+	return &bytesToLinksConvertor{
+		bytesToReaderConvertor: bytesToReaderConvertor,
+		linkValidator:          linkValidator,
+	}
 }
 
 func (c *bytesToLinksConvertor) Convert(data []byte) (links []string, err error) {
-	_, err = c.bytesToReaderConvertor.Convert(data)
+	fileReader, err := c.bytesToReaderConvertor.Convert(data)
 	if err != nil {
 		return
+	}
+
+	linksScanner := bufio.NewScanner(fileReader)
+
+	for linksScanner.Scan() {
+		if ok := c.linkValidator.IsLink(linksScanner.Text()); ok {
+			links = append(links, linksScanner.Text())
+		}
 	}
 	return
 }

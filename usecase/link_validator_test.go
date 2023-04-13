@@ -29,6 +29,10 @@ func TestIsLink(t *testing.T) {
 			desc: "space",
 			txt:  " ",
 			want: false,
+		}, {
+			desc: "valid url with spaces",
+			txt:  "                   https://placehold.co/600x400",
+			want: true,
 		},
 	}
 
