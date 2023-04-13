@@ -3,8 +3,6 @@ package domain
 import (
 	"context"
 	"errors"
-
-	"github.com/xoltawn/simple-file-storage-sharedparts/domain"
 )
 
 var (
@@ -26,18 +24,23 @@ type File struct {
 }
 
 // FileStorage provices interface for any type of file storages
+//
+//go:generate mockgen --destination=mocks/file_storage.go . FileStorage
 type FileStorage interface {
 	SaveFile(ctx context.Context, fileBytes []byte, fileInfo *File, path string) (err error)
 }
 
 // FileRepository ...
+//
+//go:generate mockgen --destination=mocks/file_repository.go . FileRepository
 type FileRepository interface {
 	SaveFile(ctx context.Context, fileInfo *File) (err error)
 	SaveMutltipleFiles(ctx context.Context, files []*File) (err error)
-	FetchFiles(ctx context.Context, limit, offset int) (files []domain.File, err error)
+	FetchFiles(ctx context.Context, limit, offset int) (files []File, err error)
 }
 
 // FileUsecase ...
 type FileUsecase interface {
 	SaveFile(ctx context.Context, fileBytes []byte, fileInfo *File) (err error)
+	FetchFiles(ctx context.Context, limit, offset int) (files []File, err error)
 }
