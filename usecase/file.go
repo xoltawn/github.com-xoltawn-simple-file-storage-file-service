@@ -3,7 +3,9 @@ package usecase
 import (
 	"context"
 	"log"
+	"time"
 
+	"github.com/google/uuid"
 	"github.com/xoltawn/simple-file-storage-file-service/domain"
 )
 
@@ -70,6 +72,9 @@ func (f *fileUsecase) SaveMutltipleFiles(ctx context.Context, filesWithByte []*d
 		if err != nil {
 			return
 		}
+
+		(*fileInfo).CreatedAt = time.Now().UTC().String()
+		(*fileInfo).LocalName = uuid.NewString()
 	}
 
 	err = f.fileRepo.SaveMutltipleFiles(ctx, files)
