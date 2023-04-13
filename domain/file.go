@@ -2,6 +2,11 @@ package domain
 
 import (
 	"context"
+	"errors"
+)
+
+var (
+	ErrInsertingRecord = errors.New("error inserting record")
 )
 
 // File is the domain objects for stored files
