@@ -2,6 +2,7 @@ package localstorage_test
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"os"
 	"testing"
@@ -28,7 +29,7 @@ func TestCreatePathIfNotExist(t *testing.T) {
 			}
 
 			//act
-			sut := localstorage.NewLocalStorage()
+			sut := localstorage.NewLocalStorage(path)
 			err = sut.CreatePathIfNotExist(recursivePath)
 
 			//assert
@@ -50,7 +51,7 @@ func TestCreatePathIfNotExist(t *testing.T) {
 			}
 
 			//act
-			sut := localstorage.NewLocalStorage()
+			sut := localstorage.NewLocalStorage(path)
 			err = sut.CreatePathIfNotExist(path)
 
 			//assert
@@ -73,7 +74,7 @@ func TestCreatePathIfNotExist(t *testing.T) {
 			}
 
 			//act
-			sut := localstorage.NewLocalStorage()
+			sut := localstorage.NewLocalStorage(path)
 			err = sut.CreatePathIfNotExist(path)
 
 			//assert
@@ -95,7 +96,7 @@ func TestCreatePathIfNotExist(t *testing.T) {
 			}
 
 			//act
-			sut := localstorage.NewLocalStorage()
+			sut := localstorage.NewLocalStorage(path)
 			err = sut.CreatePathIfNotExist(recursivePath)
 
 			//assert
@@ -121,7 +122,7 @@ func TestSaveFile(t *testing.T) {
 			}
 
 			//act
-			sut := localstorage.NewLocalStorage()
+			sut := localstorage.NewLocalStorage(path)
 			err := sut.SaveFile(context.TODO(), fileBytes, fileInto, path)
 
 			//assert
@@ -143,7 +144,7 @@ func TestSaveFile(t *testing.T) {
 			}
 
 			//act
-			sut := localstorage.NewLocalStorage()
+			sut := localstorage.NewLocalStorage(path)
 			err := sut.SaveFile(context.TODO(), fileBytes, fileInto, recursivePath)
 
 			//assert
@@ -156,4 +157,56 @@ func TestSaveFile(t *testing.T) {
 			}
 		})
 	})
+}
+
+func TestRemoveFiles(t *testing.T) {
+	//arrange
+	sut := localstorage.NewLocalStorage(path)
+	filesToDelete := []*domain.File{}
+	filesWithBytes := []*domain.FileWithBytes{
+		{
+			File: domain.File{
+				OriginalURL:   "OriginalUrl1",
+				LocalName:     "LocalName1",
+				FileExtension: "png",
+				FileSize:      1,
+				CreatedAt:     "CreatedAt1",
+			},
+			Data: []byte{},
+		},
+		{
+			File: domain.File{
+				OriginalURL:   "OriginalUrl1",
+				LocalName:     "LocalName1",
+				FileExtension: "gif",
+				FileSize:      1,
+				CreatedAt:     "CreatedAt1",
+			},
+			Data: []byte{},
+		},
+	}
+	for _, f := range filesWithBytes {
+		err := sut.SaveFile(context.TODO(), f.Data, &f.File, path)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		filesToDelete = append(filesToDelete, &f.File)
+	}
+	//act
+	err := sut.RemoveFiles(context.TODO(), filesToDelete)
+
+	//assert
+	assert.NoError(t, err)
+	for _, fd := range filesToDelete {
+		log.Println(fmt.Sprint(path, "/", fd.LocalName, "/", fd.FileExtension))
+		assert.NoFileExists(t, fmt.Sprint(path, "/", fd.LocalName, ".", fd.FileExtension))
+	}
+
+	//tearup
+	err = os.RemoveAll(path)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 }
