@@ -30,5 +30,6 @@ func (f *fileUsecase) SaveFile(ctx context.Context, fileBytes []byte, fileInfo *
 }
 
 func (f *fileUsecase) FetchFiles(ctx context.Context, limit, offset int) (files []domain.File, err error) {
+	files, err = f.fileRepo.FetchFiles(ctx, limit, offset)
 	return
 }

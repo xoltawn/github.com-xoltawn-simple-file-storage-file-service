@@ -64,3 +64,23 @@ func TestSaveFile(t *testing.T) {
 		assert.NoError(t, err)
 	})
 }
+
+func TestFetchFiles(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	limit := 10
+	offset := 0
+	t.Run("if fetching file in file repo returns error, then return error with no files", func(t *testing.T) {
+		//arrange
+		fileRepo := _mocks.NewMockFileRepository(ctrl)
+		fileRepo.EXPECT().FetchFiles(context.TODO(), gomock.Any(), gomock.Any()).Return([]domain.File{}, expErr)
+
+		//act
+		sut := usecase.NewFileUsecase(nil, fileRepo, imagesPath)
+		resFiles, err := sut.FetchFiles(context.TODO(), limit, offset)
+
+		//assert
+		assert.Error(t, expErr, err)
+		assert.Empty(t, resFiles)
+	})
+
+}
