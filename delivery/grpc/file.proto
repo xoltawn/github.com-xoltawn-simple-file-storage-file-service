@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+package file;
+
+option go_package = "delivery/grpc/filepb";
+
+//File represents domain object for storing and retreiving files
+message File {
+    string original_url = 1;
+    string local_name = 2;
+    string file_extension = 3;
+    int64 file_size = 4;
+    string created_at = 5;
+}
+
+message DownloadFromTextFileRequest {
+    bytes links = 1;
+}
+
+message DownloadFromTextFileResponse {
+}
+
+message FetchFilesRequest {
+    int32 offset = 1;
+    int32 limit = 2;
+}
+
+message FetchFilesResponse {
+    repeated File files = 1;
+}
+
+
+message UploadFileRequest {
+    bytes file = 1;
+}
+
+message UploadFileResponse {
+    File file = 1;
+}
+
+
+service FileService{
+    rpc DownloadFromTextFile(DownloadFromTextFileRequest) returns (DownloadFromTextFileResponse){};
+    rpc FetchFiles(FetchFilesRequest) returns (FetchFilesResponse){};
+    rpc UploadFile(UploadFileRequest) returns (UploadFileResponse){};
+}
