@@ -70,7 +70,7 @@ type LinkValidator interface {
 
 // BytesToReaderConvertor is reponsible for converting []byte to io.Reader
 //
-//go:generate mockgen --destination=mocks/bytes_to_links_convertor.go . BytesToLinksConvertor
+//go:generate mockgen --destination=mocks/bytes_to_reader_convertor.go . BytesToReaderConvertor
 type BytesToReaderConvertor interface {
 	Convert([]byte) (reader io.Reader, err error)
 }
