@@ -22,12 +22,20 @@ func NewFileGRPCHandler(fileUsecase domain.FileUsecase, bytesToLinksConvertor do
 
 func (h *fileGRPCHandler) DownloadFromTextFile(ctx context.Context, req *_filepb.DownloadFromTextFileRequest) (res *_filepb.DownloadFromTextFileResponse, err error) {
 
-	_, err = h.bytesToLinksConvertor.Convert(req.Links)
+	links, err := h.bytesToLinksConvertor.Convert(req.Links)
 	if err != nil {
 		return
 	}
 
 	filesWithByte := []*domain.FileWithBytes{}
+
+	for _, l := range links {
+		filesWithByte = append(filesWithByte, &domain.FileWithBytes{
+			File: domain.File{
+				OriginalURL: l,
+			},
+		})
+	}
 
 	err = h.fileUsecase.SaveMutltipleFiles(ctx, filesWithByte)
 	return
