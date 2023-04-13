@@ -59,3 +59,10 @@ type FileUsecase interface {
 type BytesToLinksConvertor interface {
 	Parse([]byte) ([]string, error)
 }
+
+// LinkValidator is reponsible for checking whether the given text file is a valid link
+//
+//go:generate mockgen --destination=mocks/link_validator.go . LinkValidator
+type LinkValidator interface {
+	IsLink(txt string) (result bool)
+}
