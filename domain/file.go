@@ -52,3 +52,10 @@ type FileUsecase interface {
 	SaveMutltipleFiles(ctx context.Context, files []*FileWithBytes) (err error)
 	FetchFiles(ctx context.Context, limit, offset int) (files []File, err error)
 }
+
+// BytesToLinksConvertor is reponsible for converting the text file in the format of bytes to array of links to download
+//
+//go:generate mockgen --destination=mocks/bytes_to_links_convertor.go . BytesToLinksConvertor
+type BytesToLinksConvertor interface {
+	Parse([]byte) ([]string, error)
+}
