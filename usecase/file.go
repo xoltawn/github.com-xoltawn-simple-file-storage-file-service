@@ -33,3 +33,13 @@ func (f *fileUsecase) FetchFiles(ctx context.Context, limit, offset int) (files 
 	files, err = f.fileRepo.FetchFiles(ctx, limit, offset)
 	return
 }
+
+func (f *fileUsecase) SaveMutltipleFiles(ctx context.Context, files []*domain.FileWithBytes) (err error) {
+	for _, fileInfo := range files {
+		err = f.fileStorage.SaveFile(ctx, fileInfo.Data, &fileInfo.File, f.imagesPath)
+		if err != nil {
+			return
+		}
+	}
+	return
+}

@@ -23,6 +23,12 @@ type File struct {
 	CreatedAt string `json:"created_at"`
 }
 
+// FileWithBytes contains File struct and also []byte of the file thath contains the file content
+type FileWithBytes struct {
+	File
+	Data []byte
+}
+
 // FileStorage provices interface for any type of file storages
 //
 //go:generate mockgen --destination=mocks/file_storage.go . FileStorage
@@ -42,5 +48,6 @@ type FileRepository interface {
 // FileUsecase ...
 type FileUsecase interface {
 	SaveFile(ctx context.Context, fileBytes []byte, fileInfo *File) (err error)
+	SaveMutltipleFiles(ctx context.Context, files []*FileWithBytes) (err error)
 	FetchFiles(ctx context.Context, limit, offset int) (files []File, err error)
 }

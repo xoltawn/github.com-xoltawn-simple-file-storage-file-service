@@ -107,3 +107,31 @@ func TestFetchFiles(t *testing.T) {
 	})
 
 }
+
+func TestSaveMutltipleFiles(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	files := []*domain.FileWithBytes{
+		{
+			File: domain.File{
+				OriginalURL:   "OriginalUrl1",
+				LocalName:     "LocalName1",
+				FileExtension: "FileExtension1",
+				FileSize:      1,
+				CreatedAt:     "CreatedAt1",
+			},
+			Data: []byte{},
+		},
+	}
+	t.Run("if saving file in file storage returns error, then return error", func(t *testing.T) {
+		//arrange
+		fileStorage := _mocks.NewMockFileStorage(ctrl)
+		fileStorage.EXPECT().SaveFile(context.TODO(), gomock.Any(), gomock.Any(), gomock.Any()).Return(expErr)
+
+		//act
+		sut := usecase.NewFileUsecase(fileStorage, nil, imagesPath)
+		err := sut.SaveMutltipleFiles(context.TODO(), files)
+
+		//assert
+		assert.Error(t, expErr, err)
+	})
+}
