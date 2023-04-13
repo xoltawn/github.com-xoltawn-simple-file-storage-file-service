@@ -47,6 +47,8 @@ type FileRepository interface {
 }
 
 // FileUsecase ...
+//
+//go:generate mockgen --destination=mocks/file_usecase.go . FileUsecase
 type FileUsecase interface {
 	SaveFile(ctx context.Context, fileBytes []byte, fileInfo *File) (err error)
 	SaveMutltipleFiles(ctx context.Context, files []*FileWithBytes) (err error)
