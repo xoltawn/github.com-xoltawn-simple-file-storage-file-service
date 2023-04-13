@@ -121,6 +121,16 @@ func TestSaveMutltipleFiles(t *testing.T) {
 			},
 			Data: []byte{},
 		},
+		{
+			File: domain.File{
+				OriginalURL:   "OriginalUrl1",
+				LocalName:     "LocalName1",
+				FileExtension: "FileExtension1",
+				FileSize:      1,
+				CreatedAt:     "CreatedAt1",
+			},
+			Data: []byte{},
+		},
 	}
 	t.Run("if saving file in file storage returns error, then return error", func(t *testing.T) {
 		//arrange
@@ -133,5 +143,18 @@ func TestSaveMutltipleFiles(t *testing.T) {
 
 		//assert
 		assert.Error(t, expErr, err)
+	})
+
+	t.Run("if saving file to storage is successful, SaveFile in storage must be called that times", func(t *testing.T) {
+		//arrange
+		fileStorage := _mocks.NewMockFileStorage(ctrl)
+		fileStorage.EXPECT().SaveFile(context.TODO(), gomock.Any(), gomock.Any(), gomock.Any()).Times(len(files)).Return(nil)
+
+		//act
+		sut := usecase.NewFileUsecase(fileStorage, nil, imagesPath)
+		err := sut.SaveMutltipleFiles(context.TODO(), files)
+
+		//assert
+		assert.NoError(t, err)
 	})
 }
