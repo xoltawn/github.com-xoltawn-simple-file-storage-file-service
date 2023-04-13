@@ -83,4 +83,27 @@ func TestFetchFiles(t *testing.T) {
 		assert.Empty(t, resFiles)
 	})
 
+	t.Run("if no error occurres, retursn nil for error and the files requested", func(t *testing.T) {
+		//arrange
+		expFiles := []domain.File{
+			{
+				OriginalURL:   "OriginalUrl1",
+				LocalName:     "LocalName1",
+				FileExtension: "FileExtension1",
+				FileSize:      1,
+				CreatedAt:     "CreatedAt1",
+			},
+		}
+		fileRepo := _mocks.NewMockFileRepository(ctrl)
+		fileRepo.EXPECT().FetchFiles(context.TODO(), gomock.Any(), gomock.Any()).Return(expFiles, nil)
+
+		//act
+		sut := usecase.NewFileUsecase(nil, fileRepo, imagesPath)
+		resFiles, err := sut.FetchFiles(context.TODO(), limit, offset)
+
+		//assert
+		assert.NoError(t, err)
+		assert.Equal(t, expFiles, resFiles)
+	})
+
 }
