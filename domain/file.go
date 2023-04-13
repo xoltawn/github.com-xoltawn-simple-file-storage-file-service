@@ -7,7 +7,8 @@ import (
 )
 
 var (
-	ErrInsertingRecord = errors.New("error inserting record")
+	ErrInsertingRecord           = errors.New("error inserting record")
+	ErrFileExtensionNotSupported = errors.New("File Extension Not Supported")
 )
 
 // File is the domain objects for stored files
@@ -24,7 +25,7 @@ type File struct {
 	CreatedAt string `json:"created_at"`
 }
 
-// FileWithBytes contains File struct and also []byte of the file thath contains the file content
+// FileWithBytes contains File struct and also []byte of the file that contains the file content
 type FileWithBytes struct {
 	File
 	Data []byte
@@ -73,4 +74,12 @@ type LinkValidator interface {
 //go:generate mockgen --destination=mocks/bytes_to_reader_convertor.go . BytesToReaderConvertor
 type BytesToReaderConvertor interface {
 	Convert([]byte) (reader io.Reader, err error)
+}
+
+// FileDownloader is reponsible for downloading the file from the given URL
+// and update the needed info in the FileWithBytes struct (Data []byte, FileSize, FileExtension)
+//
+//go:generate mockgen --destination=mocks/file_downloader.go . FileDownloader
+type FileDownloader interface {
+	Download(*FileWithBytes) (err error)
 }
