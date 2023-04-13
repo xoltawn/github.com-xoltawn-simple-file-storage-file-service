@@ -43,3 +43,7 @@ func (s *localstorage) CreatePathIfNotExist(path string) (err error) {
 
 	return
 }
+
+func (s *localstorage) RemoveFiles(ctx context.Context, files []*domain.File) (err error) {
+	return
+}

@@ -164,18 +164,22 @@ func TestSaveMutltipleFiles(t *testing.T) {
 
 	t.Run("if saving file to storage is successful, SaveFile in storage must be called that times", func(t *testing.T) {
 		t.Run("if SaveMutltipleFiles in repo has error then return err", func(t *testing.T) {
-			//arrange
-			fileStorage := _mocks.NewMockFileStorage(ctrl)
-			fileStorage.EXPECT().SaveFile(context.TODO(), gomock.Any(), gomock.Any(), gomock.Any()).Times(len(filesWithBytes)).Return(nil)
-			fileRepo := _mocks.NewMockFileRepository(ctrl)
-			fileRepo.EXPECT().SaveMutltipleFiles(context.TODO(), gomock.Any()).Return(expErr)
+			t.Run("remove created files", func(t *testing.T) {
+				//arrange
+				fileStorage := _mocks.NewMockFileStorage(ctrl)
+				fileStorage.EXPECT().SaveFile(context.TODO(), gomock.Any(), gomock.Any(), gomock.Any()).Times(len(filesWithBytes)).Return(nil)
+				fileStorage.EXPECT().RemoveFiles(context.TODO(), gomock.Any()).Times(1).Return(nil)
 
-			//act
-			sut := usecase.NewFileUsecase(fileStorage, fileRepo, imagesPath)
-			err := sut.SaveMutltipleFiles(context.TODO(), filesWithBytes)
+				fileRepo := _mocks.NewMockFileRepository(ctrl)
+				fileRepo.EXPECT().SaveMutltipleFiles(context.TODO(), gomock.Any()).Return(expErr)
 
-			//assert
-			assert.Error(t, err)
+				//act
+				sut := usecase.NewFileUsecase(fileStorage, fileRepo, imagesPath)
+				err := sut.SaveMutltipleFiles(context.TODO(), filesWithBytes)
+
+				//assert
+				assert.Error(t, err)
+			})
 		})
 
 		t.Run("if SaveMutltipleFiles in repo has no error then return nil", func(t *testing.T) {

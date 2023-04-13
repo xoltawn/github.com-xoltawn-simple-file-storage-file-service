@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"log"
 
 	"github.com/xoltawn/simple-file-storage-file-service/domain"
 )
@@ -44,5 +45,11 @@ func (f *fileUsecase) SaveMutltipleFiles(ctx context.Context, filesWithByte []*d
 	}
 
 	err = f.fileRepo.SaveMutltipleFiles(ctx, files)
+	if err != nil {
+		removeErr := f.fileStorage.RemoveFiles(ctx, files)
+		if removeErr != nil {
+			log.Println(err)
+		}
+	}
 	return
 }

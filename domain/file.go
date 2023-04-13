@@ -34,6 +34,7 @@ type FileWithBytes struct {
 //go:generate mockgen --destination=mocks/file_storage.go . FileStorage
 type FileStorage interface {
 	SaveFile(ctx context.Context, fileBytes []byte, fileInfo *File, path string) (err error)
+	RemoveFiles(ctx context.Context, files []*File) (err error)
 }
 
 // FileRepository ...
