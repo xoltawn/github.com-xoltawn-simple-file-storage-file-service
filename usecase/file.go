@@ -8,16 +8,36 @@ import (
 )
 
 type fileUsecase struct {
-	fileStorage domain.FileStorage
-	fileRepo    domain.FileRepository
-	imagesPath  string
+	fileStorage    domain.FileStorage
+	fileRepo       domain.FileRepository
+	fileDownloader domain.FileDownloader
+	imagesPath     string
 }
 
-func NewFileUsecase(fileStorage domain.FileStorage, fileRepo domain.FileRepository, imagesPath string) *fileUsecase {
-	return &fileUsecase{fileStorage: fileStorage, fileRepo: fileRepo, imagesPath: imagesPath}
+func NewFileUsecase(
+	fileStorage domain.FileStorage,
+	fileRepo domain.FileRepository,
+	fileDownloader domain.FileDownloader,
+	imagesPath string,
+) *fileUsecase {
+	return &fileUsecase{
+		fileStorage:    fileStorage,
+		fileRepo:       fileRepo,
+		imagesPath:     imagesPath,
+		fileDownloader: fileDownloader,
+	}
 }
 
 func (f *fileUsecase) SaveFile(ctx context.Context, fileBytes []byte, fileInfo *domain.File) (err error) {
+
+	err = f.fileDownloader.Download(&domain.FileWithBytes{
+		File: *fileInfo,
+		Data: fileBytes,
+	})
+	if err != nil {
+		return
+	}
+
 	err = f.fileStorage.SaveFile(ctx, fileBytes, fileInfo, f.imagesPath)
 	if err != nil {
 		return
@@ -36,6 +56,14 @@ func (f *fileUsecase) FetchFiles(ctx context.Context, limit, offset int) (files 
 }
 
 func (f *fileUsecase) SaveMutltipleFiles(ctx context.Context, filesWithByte []*domain.FileWithBytes) (err error) {
+	//TODO: concurrent implementation
+	for _, fileToDownload := range filesWithByte {
+		downloadErr := f.fileDownloader.Download(fileToDownload)
+		if downloadErr != nil {
+			return
+		}
+	}
+
 	files := make([]*domain.File, len(filesWithByte))
 	for _, fileInfo := range filesWithByte {
 		err = f.fileStorage.SaveFile(ctx, fileInfo.Data, &fileInfo.File, f.imagesPath)
