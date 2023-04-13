@@ -45,6 +45,9 @@ func (f *fileUsecase) SaveFile(ctx context.Context, fileBytes []byte, fileInfo *
 		return
 	}
 
+	(*fileInfo).CreatedAt = time.Now().UTC().String()
+	(*fileInfo).LocalName = uuid.NewString()
+
 	err = f.fileRepo.SaveFile(ctx, fileInfo)
 	if err != nil {
 		return
