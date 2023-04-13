@@ -1,20 +1,25 @@
 version: '3.8'
 
 services:
-  postgres:
-    image: registry.docker.ir/library/postgres:${PSQL_DOCKER_IMAGE_TAG}
-    restart: always
+  pg-0:
+    restart: unless-stopped
+    ports:
+      - '5434:5432'
     environment:
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-    networks: 
-      - simple-file-storage
+      - "REPMGR_PARTNER_NODES=${REPMGR_PARTNER_NODES}"
+      - "REPMGR_NODE_NAME=${REPMGR_NODE_NAME}"
+      - "REPMGR_NODE_NETWORK_NAME=${REPMGR_NODE_NETWORK_NAME}"
+      - "REPMGR_PRIMARY_HOST=${REPMGR_PRIMARY_HOST}"
+      - "REPMGR_PASSWORD=${REPMGR_PASSWORD}"
+      - "POSTGRESQL_PASSWORD=${POSTGRESQL_PASSWORD}"
+    image: 'registry.docker.ir/bitnami/postgresql-repmgr:15'
 
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    networks: 
-      - simple-file-storage
+  # app:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   networks: 
+  #     - simple-file-storage
 
 networks:
   simple-file-storage:
