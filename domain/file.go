@@ -33,6 +33,7 @@ type FileStorage interface {
 // FileRepository ...
 type FileRepository interface {
 	SaveFile(ctx context.Context, fileInfo *File) (err error)
+	SaveMutltipleFiles(ctx context.Context, files []*File) (err error)
 	FetchFiles(ctx context.Context, limit, offset int) (files []domain.File, err error)
 }
 

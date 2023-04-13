@@ -32,6 +32,20 @@ func (r *filePostgresRepository) SaveFile(ctx context.Context, fileInfo *domain.
 	return
 }
 
+func (r *filePostgresRepository) SaveMutltipleFiles(ctx context.Context, files []*domain.File) (err error) {
+	result := r.db.Create(&files)
+	if result.RowsAffected == 0 {
+		return domain.ErrInsertingRecord
+	}
+
+	if result.Error != nil {
+		log.Println(result.Error.Error())
+		return domain.ErrInsertingRecord
+	}
+
+	return
+}
+
 func (r *filePostgresRepository) FetchFiles(ctx context.Context, limit, offset int) (files []domain.File, err error) {
 	tx := r.db.Limit(limit).Offset(offset).Find(&files)
 	return files, tx.Error
