@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/xoltawn/simple-file-storage-sharedparts/domain"
+	"github.com/xoltawn/simple-file-storage-file-service/domain"
 )
 
 type localstorage struct {

@@ -9,8 +9,8 @@ import (
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 
+	domain "github.com/xoltawn/simple-file-storage-file-service/domain"
 	"github.com/xoltawn/simple-file-storage-file-service/repository/localstorage"
-	_domain "github.com/xoltawn/simple-file-storage-sharedparts/domain"
 )
 
 const (
@@ -115,7 +115,7 @@ func TestSaveFile(t *testing.T) {
 		t.Run("non-recursive", func(t *testing.T) {
 			//arrange
 			fileBytes := []byte{}
-			fileInto := &_domain.File{
+			fileInto := &domain.File{
 				LocalName:     uuid.New().String(),
 				FileExtension: "png",
 			}
@@ -137,7 +137,7 @@ func TestSaveFile(t *testing.T) {
 		t.Run("recursive", func(t *testing.T) {
 			//arrange
 			fileBytes := []byte{}
-			fileInto := &_domain.File{
+			fileInto := &domain.File{
 				LocalName:     uuid.New().String(),
 				FileExtension: "png",
 			}
