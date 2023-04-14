@@ -1,6 +1,8 @@
 package grpc
 
 import (
+	"os"
+
 	_filepb "github.com/xoltawn/simple-file-storage-file-service/delivery/grpc/filepb"
 	"github.com/xoltawn/simple-file-storage-file-service/domain"
 
@@ -63,5 +65,10 @@ func (h *fileGRPCHandler) FetchFiles(ctx context.Context, req *_filepb.FetchFile
 
 }
 func (h *fileGRPCHandler) UploadFile(ctx context.Context, req *_filepb.UploadFileRequest) (res *_filepb.UploadFileResponse, err error) {
-	return
+	fileInfo := &domain.File{}
+	err = h.fileUsecase.SaveFile(ctx, req.GetFile(), fileInfo, os.Getenv("USER_CONTENT_PATH"))
+	if err != nil {
+		return &_filepb.UploadFileResponse{}, err
+	}
+	return &_filepb.UploadFileResponse{}, err
 }

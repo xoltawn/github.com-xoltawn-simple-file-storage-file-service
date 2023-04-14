@@ -146,9 +146,23 @@ func TestFetchFiles(t *testing.T) {
 }
 
 func TestUploadFile(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	t.Run("if SaveFile of usecase returns err, return empty res and err", func(t *testing.T) {
+		//arrange
+		req := &_filepb.UploadFileRequest{}
+		expRes := &_filepb.UploadFileResponse{}
 
-	t.Run("", func(t *testing.T) {
+		fileUsecase := _mocks.NewMockFileUsecase(ctrl)
+		fileUsecase.EXPECT().SaveFile(context.TODO(), gomock.Any(), gomock.Any(), gomock.Any()).Return(sampleErr)
 
+		//act
+		sut := _grpc.NewFileGRPCHandler(fileUsecase, nil)
+		res, err := sut.UploadFile(context.TODO(), req)
+
+		//assert
+		assert.Error(t, err)
+		assert.Equal(t, sampleErr, err)
+		assert.Equal(t, expRes, res)
 	})
 
 }
