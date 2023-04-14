@@ -1,8 +1,6 @@
 # github.com-xoltawn-simple-file-storage-file-service
-The file service for simple-file-storage repository
+The file service for [simple-file-storage](https://github.com/xoltawn/simple-file-storage.git) repository
 
 
 ##todos
-- [x] concurrency for downloading
 - [ ] recover panics
-- [x] images quality check
