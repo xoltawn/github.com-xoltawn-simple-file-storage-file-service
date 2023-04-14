@@ -9,6 +9,8 @@ import (
 
 	"github.com/joho/godotenv"
 	_grpcHandler "github.com/xoltawn/simple-file-storage-file-service/delivery/grpc"
+	_http "github.com/xoltawn/simple-file-storage-file-service/delivery/http"
+
 	"github.com/xoltawn/simple-file-storage-file-service/delivery/grpc/filepb"
 	"github.com/xoltawn/simple-file-storage-file-service/domain"
 	"github.com/xoltawn/simple-file-storage-file-service/repository/localstorage"
@@ -55,16 +57,25 @@ func main() {
 	bytesToReaderConvertor := usecase.NewBytesToReaderConvertor()
 	bytesToLinksConvertor := usecase.NewBytesToLinksConvertor(bytesToReaderConvertor, linkValidator)
 
-	fileStorage := localstorage.NewLocalStorage(os.Getenv("DOWNLOADED_IMAGES_PATH"))
+	imagesPath := os.Getenv("DOWNLOADED_IMAGES_PATH")
+	fileStorage := localstorage.NewLocalStorage(imagesPath)
 	fileRepository := _postgres.NewFilePostgresRepository(db)
 	fileDownloader := usecase.NewFileDownloader()
-	fileUsecase := usecase.NewFileUsecase(fileStorage, fileRepository, fileDownloader, os.Getenv("DOWNLOADED_IMAGES_PATH"))
+	fileUsecase := usecase.NewFileUsecase(fileStorage, fileRepository, fileDownloader, imagesPath)
 
 	s := grpc.NewServer()
 	filepb.RegisterFileServiceServer(s, _grpcHandler.NewFileGRPCHandler(fileUsecase, bytesToLinksConvertor))
+
+	go func() {
+		err = _http.NewHTTPHandler().ServeContent(os.Getenv("HTTP_ADDRESS"), fmt.Sprint("/", imagesPath, "/"), fmt.Sprint("./", imagesPath))
+		if err != nil {
+			log.Fatal(err)
+		}
+	}()
 
 	log.Println("Server is listening on port", runPort)
 	if err := s.Serve(listener); err != nil {
 		log.Fatal(err)
 	}
+
 }
