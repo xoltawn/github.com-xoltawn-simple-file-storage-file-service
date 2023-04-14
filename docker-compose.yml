@@ -3,8 +3,8 @@ version: '3.8'
 services:
   pg-0:
     restart: unless-stopped
-    ports:
-      - '5434:5432'
+    # ports:
+    #   - '5434:5432'
     environment:
       - "REPMGR_PARTNER_NODES=${REPMGR_PARTNER_NODES}"
       - "REPMGR_NODE_NAME=${REPMGR_NODE_NAME}"
@@ -13,15 +13,22 @@ services:
       - "REPMGR_PASSWORD=${REPMGR_PASSWORD}"
       - "POSTGRESQL_PASSWORD=${POSTGRESQL_PASSWORD}"
     image: 'registry.docker.ir/bitnami/postgresql-repmgr:15'
+    networks: 
+      - simple-file-storage
 
-  # app:
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile
-  #   networks: 
-  #     - simple-file-storage
+  app:
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: Dockerfile
+    networks: 
+      - simple-file-storage
+    depends_on:
+      - pg-0
+    volumes:
+      - '.env:/.env'
 
 networks:
   simple-file-storage:
+    driver: bridge
     name: simple-file-storage
-    external: true    
