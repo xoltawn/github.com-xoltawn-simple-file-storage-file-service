@@ -28,7 +28,7 @@ func TestSaveFile(t *testing.T) {
 
 		//act
 		sut := usecase.NewFileUsecase(fileStorage, nil, nil, imagesPath)
-		err := sut.SaveFile(context.TODO(), fileBytes, &file)
+		err := sut.SaveFile(context.TODO(), fileBytes, &file, imagesPath)
 
 		//assert
 		assert.Error(t, expErr, err)
@@ -43,7 +43,7 @@ func TestSaveFile(t *testing.T) {
 
 		//act
 		sut := usecase.NewFileUsecase(fileStorage, fileRepo, nil, imagesPath)
-		err := sut.SaveFile(context.TODO(), fileBytes, &file)
+		err := sut.SaveFile(context.TODO(), fileBytes, &file, imagesPath)
 
 		//assert
 		assert.Error(t, expErr, err)
@@ -58,7 +58,7 @@ func TestSaveFile(t *testing.T) {
 
 		//act
 		sut := usecase.NewFileUsecase(fileStorage, fileRepo, nil, imagesPath)
-		err := sut.SaveFile(context.TODO(), fileBytes, &file)
+		err := sut.SaveFile(context.TODO(), fileBytes, &file, imagesPath)
 
 		//assert
 		assert.NoError(t, err)

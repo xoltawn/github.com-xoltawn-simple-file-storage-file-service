@@ -51,17 +51,17 @@ func (mr *MockFileUsecaseMockRecorder) FetchFiles(arg0, arg1, arg2 interface{}) 
 }
 
 // SaveFile mocks base method.
-func (m *MockFileUsecase) SaveFile(arg0 context.Context, arg1 []byte, arg2 *domain.File) error {
+func (m *MockFileUsecase) SaveFile(arg0 context.Context, arg1 []byte, arg2 *domain.File, arg3 string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SaveFile", arg0, arg1, arg2)
+	ret := m.ctrl.Call(m, "SaveFile", arg0, arg1, arg2, arg3)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // SaveFile indicates an expected call of SaveFile.
-func (mr *MockFileUsecaseMockRecorder) SaveFile(arg0, arg1, arg2 interface{}) *gomock.Call {
+func (mr *MockFileUsecaseMockRecorder) SaveFile(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SaveFile", reflect.TypeOf((*MockFileUsecase)(nil).SaveFile), arg0, arg1, arg2)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SaveFile", reflect.TypeOf((*MockFileUsecase)(nil).SaveFile), arg0, arg1, arg2, arg3)
 }
 
 // SaveMutltipleFiles mocks base method.

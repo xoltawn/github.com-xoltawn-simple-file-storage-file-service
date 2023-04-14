@@ -30,9 +30,9 @@ func NewFileUsecase(
 	}
 }
 
-func (f *fileUsecase) SaveFile(ctx context.Context, fileBytes []byte, fileInfo *domain.File) (err error) {
+func (f *fileUsecase) SaveFile(ctx context.Context, fileBytes []byte, fileInfo *domain.File, path string) (err error) {
 
-	err = f.fileStorage.SaveFile(ctx, fileBytes, fileInfo, f.imagesPath)
+	err = f.fileStorage.SaveFile(ctx, fileBytes, fileInfo, path)
 	if err != nil {
 		return
 	}
