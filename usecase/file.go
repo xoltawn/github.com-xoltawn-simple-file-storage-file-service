@@ -64,19 +64,23 @@ func (f *fileUsecase) FetchFiles(ctx context.Context, limit, offset int) (files 
 
 func (f *fileUsecase) SaveMutltipleFiles(ctx context.Context, filesWithByte []*domain.FileWithBytes) (err error) {
 	var wg sync.WaitGroup
-
+	var once sync.Once
 	for _, fileToDownload := range filesWithByte {
 		wg.Add(1)
 		go func(fileToDownload *domain.FileWithBytes) {
 			defer wg.Done()
 			downloadErr := f.fileDownloader.Download(fileToDownload)
 			if downloadErr != nil {
-				return
+				once.Do(func() { err = downloadErr })
 			}
+			// wg.Done()
+
 		}(fileToDownload)
 	}
-
 	wg.Wait()
+	if err != nil {
+		return
+	}
 
 	files := []*domain.File{}
 	for _, fileInfo := range filesWithByte {
