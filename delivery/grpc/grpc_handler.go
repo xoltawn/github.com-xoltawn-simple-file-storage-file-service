@@ -56,6 +56,7 @@ func (h *fileGRPCHandler) FetchFiles(ctx context.Context, req *_filepb.FetchFile
 			FileExtension: file.FileExtension,
 			FileSize:      file.FileSize,
 			CreatedAt:     file.CreatedAt,
+			FileLocation:  file.FileLocation,
 		}
 		expFiles = append(expFiles, pfFile)
 	}
@@ -77,6 +78,7 @@ func (h *fileGRPCHandler) UploadFile(ctx context.Context, req *_filepb.UploadFil
 			FileExtension: fileInfo.FileExtension,
 			FileSize:      fileInfo.FileSize,
 			CreatedAt:     fileInfo.CreatedAt,
+			FileLocation:  fileInfo.FileLocation,
 		},
 	}, err
 }

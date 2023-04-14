@@ -35,6 +35,7 @@ func NewFileUsecase(
 
 func (f *fileUsecase) SaveFile(ctx context.Context, fileBytes []byte, fileInfo *domain.File, path string) (err error) {
 	(*fileInfo).LocalName = uuid.NewString()
+	(*fileInfo).FileLocation = path
 	_, extension, ok := strings.Cut(http.DetectContentType(fileBytes), "/")
 	if !ok {
 		return domain.ErrFileExtensionNotSupported
@@ -48,7 +49,6 @@ func (f *fileUsecase) SaveFile(ctx context.Context, fileBytes []byte, fileInfo *
 	}
 
 	(*fileInfo).CreatedAt = time.Now().UTC().String()
-	(*fileInfo).LocalName = uuid.NewString()
 
 	err = f.fileRepo.SaveFile(ctx, fileInfo)
 	if err != nil {
@@ -85,6 +85,7 @@ func (f *fileUsecase) SaveMutltipleFiles(ctx context.Context, filesWithByte []*d
 	files := []*domain.File{}
 	for _, fileInfo := range filesWithByte {
 		(*fileInfo).LocalName = uuid.NewString()
+		(*fileInfo).FileLocation = f.imagesPath
 		err = f.fileStorage.SaveFile(ctx, fileInfo.Data, fileInfo.File, f.imagesPath)
 		if err != nil {
 			return

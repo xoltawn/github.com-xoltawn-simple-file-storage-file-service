@@ -11,6 +11,7 @@ message File {
     string file_extension = 3;
     int64 file_size = 4;
     string created_at = 5;
+    string file_location = 6;
 }
 
 message DownloadFromTextFileRequest {

@@ -18,6 +18,8 @@ type File struct {
 	OriginalURL string `json:"original_url"`
 	//LocalName is the name given on storing
 	LocalName string `json:"local_name"`
+	//FileLocation is the location of the stored file
+	FileLocation string `json:"file_location"`
 	//FileExtension ...
 	FileExtension string `json:"file_extension"`
 	//FileSize ...
