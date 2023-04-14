@@ -40,8 +40,10 @@ func (h *fileGRPCHandler) DownloadFromTextFile(ctx context.Context, req *_filepb
 	err = h.fileUsecase.SaveMutltipleFiles(ctx, filesWithByte)
 	return &_filepb.DownloadFromTextFileResponse{}, err
 }
-func (h *fileGRPCHandler) FetchFiles(context.Context, *_filepb.FetchFilesRequest) (res *_filepb.FetchFilesResponse, err error) {
-	return
+func (h *fileGRPCHandler) FetchFiles(ctx context.Context, req *_filepb.FetchFilesRequest) (res *_filepb.FetchFilesResponse, err error) {
+	_, err = h.fileUsecase.FetchFiles(ctx, int(req.Limit), int(req.Offset))
+	return &_filepb.FetchFilesResponse{}, err
+
 }
 func (h *fileGRPCHandler) UploadFile(context.Context, *_filepb.UploadFileRequest) (res *_filepb.UploadFileResponse, err error) {
 	return

@@ -9,6 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	_grpc "github.com/xoltawn/simple-file-storage-file-service/delivery/grpc"
 	_filepb "github.com/xoltawn/simple-file-storage-file-service/delivery/grpc/filepb"
+	"github.com/xoltawn/simple-file-storage-file-service/domain"
 	_mocks "github.com/xoltawn/simple-file-storage-file-service/domain/mocks"
 )
 
@@ -73,4 +74,26 @@ func TestDownloadFromTextFile(t *testing.T) {
 		assert.Equal(t, expRes, res)
 	})
 
+}
+
+func TestFetchFiles(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	t.Run("if FetchFiles in usecase returns err, return err from handler with empty files in response", func(t *testing.T) {
+		//arrange
+		req := &_filepb.FetchFilesRequest{}
+		expRes := &_filepb.FetchFilesResponse{}
+		emptySliceOfFiles := make([]domain.File, 0)
+
+		fileUsecase := _mocks.NewMockFileUsecase(ctrl)
+		fileUsecase.EXPECT().FetchFiles(context.TODO(), gomock.Any(), gomock.Any()).Return(emptySliceOfFiles, sampleErr)
+
+		//act
+		sut := _grpc.NewFileGRPCHandler(fileUsecase, nil)
+		res, err := sut.FetchFiles(context.TODO(), req)
+
+		//assert
+		assert.Error(t, err)
+		assert.Equal(t, sampleErr, err)
+		assert.Equal(t, expRes, res)
+	})
 }
