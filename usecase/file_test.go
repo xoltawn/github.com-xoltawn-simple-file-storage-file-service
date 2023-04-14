@@ -134,7 +134,7 @@ func TestSaveMutltipleFiles(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	filesWithBytes := []*domain.FileWithBytes{
 		{
-			File: domain.File{
+			File: &domain.File{
 				OriginalURL:   "OriginalUrl1",
 				LocalName:     "LocalName1",
 				FileExtension: "FileExtension1",
@@ -144,7 +144,7 @@ func TestSaveMutltipleFiles(t *testing.T) {
 			Data: []byte{},
 		},
 		{
-			File: domain.File{
+			File: &domain.File{
 				OriginalURL:   "OriginalUrl1",
 				LocalName:     "LocalName1",
 				FileExtension: "FileExtension1",

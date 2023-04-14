@@ -165,7 +165,7 @@ func TestRemoveFiles(t *testing.T) {
 	filesToDelete := []*domain.File{}
 	filesWithBytes := []*domain.FileWithBytes{
 		{
-			File: domain.File{
+			File: &domain.File{
 				OriginalURL:   "OriginalUrl1",
 				LocalName:     "LocalName1",
 				FileExtension: "png",
@@ -175,7 +175,7 @@ func TestRemoveFiles(t *testing.T) {
 			Data: []byte{},
 		},
 		{
-			File: domain.File{
+			File: &domain.File{
 				OriginalURL:   "OriginalUrl1",
 				LocalName:     "LocalName1",
 				FileExtension: "gif",
@@ -186,12 +186,12 @@ func TestRemoveFiles(t *testing.T) {
 		},
 	}
 	for _, f := range filesWithBytes {
-		err := sut.SaveFile(context.TODO(), f.Data, &f.File, path)
+		err := sut.SaveFile(context.TODO(), f.Data, (*f).File, path)
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		filesToDelete = append(filesToDelete, &f.File)
+		filesToDelete = append(filesToDelete, f.File)
 	}
 	//act
 	err := sut.RemoveFiles(context.TODO(), filesToDelete)
@@ -199,7 +199,6 @@ func TestRemoveFiles(t *testing.T) {
 	//assert
 	assert.NoError(t, err)
 	for _, fd := range filesToDelete {
-		log.Println(fmt.Sprint(path, "/", fd.LocalName, "/", fd.FileExtension))
 		assert.NoFileExists(t, fmt.Sprint(path, "/", fd.LocalName, ".", fd.FileExtension))
 	}
 
