@@ -27,8 +27,9 @@ services:
       - pg-0
     volumes:
       - '.env:/.env'
+      - './images:/images'
     ports:
-        - '50051:50051'
+      - '50051:50051'
 networks:
   simple-file-storage:
     driver: bridge

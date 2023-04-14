@@ -19,6 +19,7 @@ COPY --from=build-stage /file-service /file-service
 
 EXPOSE 50051
 
-USER 1001:1001
+USER root:root
+VOLUME [ "./images" ]
 
 ENTRYPOINT ["/file-service"]
