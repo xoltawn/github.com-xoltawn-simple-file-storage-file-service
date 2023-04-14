@@ -3,11 +3,18 @@ package main
 import (
 	"fmt"
 	"log"
+	"net"
 	"os"
 	"strconv"
 
 	"github.com/joho/godotenv"
+	_grpcHandler "github.com/xoltawn/simple-file-storage-file-service/delivery/grpc"
+	"github.com/xoltawn/simple-file-storage-file-service/delivery/grpc/filepb"
 	"github.com/xoltawn/simple-file-storage-file-service/domain"
+	"github.com/xoltawn/simple-file-storage-file-service/repository/localstorage"
+	_postgres "github.com/xoltawn/simple-file-storage-file-service/repository/postgres"
+	"github.com/xoltawn/simple-file-storage-file-service/usecase"
+	"google.golang.org/grpc"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -33,5 +40,26 @@ func main() {
 	err = db.AutoMigrate(&domain.File{})
 	if err != nil {
 		log.Fatalln(err)
+	}
+
+	listener, err := net.Listen("tcp", ":50051")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	linkValidator := usecase.NewLinkValidator()
+	bytesToReaderConvertor := usecase.NewBytesToReaderConvertor()
+	bytesToLinksConvertor := usecase.NewBytesToLinksConvertor(bytesToReaderConvertor, linkValidator)
+
+	fileStorage := localstorage.NewLocalStorage(os.Getenv("DOWNLOADED_IMAGES_PATH"))
+	fileRepository := _postgres.NewFilePostgresRepository(db)
+	fileDownloader := usecase.NewFileDownloader()
+	fileUsecase := usecase.NewFileUsecase(fileStorage, fileRepository, fileDownloader, os.Getenv("DOWNLOADED_IMAGES_PATH"))
+
+	s := grpc.NewServer()
+	filepb.RegisterFileServiceServer(s, _grpcHandler.NewFileGRPCHandler(fileUsecase, bytesToLinksConvertor))
+
+	if err := s.Serve(listener); err != nil {
+		log.Fatal(err)
 	}
 }
