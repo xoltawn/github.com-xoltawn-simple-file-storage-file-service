@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/google/uuid"
@@ -62,13 +63,20 @@ func (f *fileUsecase) FetchFiles(ctx context.Context, limit, offset int) (files 
 }
 
 func (f *fileUsecase) SaveMutltipleFiles(ctx context.Context, filesWithByte []*domain.FileWithBytes) (err error) {
-	//TODO: concurrent implementation
+	var wg sync.WaitGroup
+
 	for _, fileToDownload := range filesWithByte {
-		downloadErr := f.fileDownloader.Download(fileToDownload)
-		if downloadErr != nil {
-			return
-		}
+		wg.Add(1)
+		go func(fileToDownload *domain.FileWithBytes) {
+			defer wg.Done()
+			downloadErr := f.fileDownloader.Download(fileToDownload)
+			if downloadErr != nil {
+				return
+			}
+		}(fileToDownload)
 	}
+
+	wg.Wait()
 
 	files := []*domain.File{}
 	for _, fileInfo := range filesWithByte {
