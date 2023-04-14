@@ -3,6 +3,6 @@ The file service for simple-file-storage repository
 
 
 ##todos
-- [ ] concurrency for downloading
+- [x] concurrency for downloading
 - [ ] recover panics
 - [ ] images quality check
