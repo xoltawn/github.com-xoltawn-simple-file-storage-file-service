@@ -4,3 +4,7 @@ The file service for [simple-file-storage](https://github.com/xoltawn/simple-fil
 
 ##todos
 - [ ] recover panics
+
+## How ro run
+    - clone the repository
+    - enter `make run` command
