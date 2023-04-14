@@ -25,7 +25,6 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 
-	log.Println(os.Getenv("DB_HOST"))
 	dbPort, err := strconv.Atoi(os.Getenv("DB_PORT"))
 	if err != nil {
 		log.Fatalln(err)
@@ -42,7 +41,12 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	listener, err := net.Listen("tcp", ":50051")
+	runPort, err := strconv.Atoi(os.Getenv("RUN_PORT"))
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	listener, err := net.Listen("tcp", fmt.Sprint(":", runPort))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -59,6 +63,7 @@ func main() {
 	s := grpc.NewServer()
 	filepb.RegisterFileServiceServer(s, _grpcHandler.NewFileGRPCHandler(fileUsecase, bytesToLinksConvertor))
 
+	log.Println("Server is listening on port", runPort)
 	if err := s.Serve(listener); err != nil {
 		log.Fatal(err)
 	}
