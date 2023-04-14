@@ -13,6 +13,7 @@ var (
 
 // File is the domain objects for stored files
 type File struct {
+	ID uint `gorm:"primarykey"`
 	//OriginalUrl indicates the url from which the file was downloaded(used when file is downloaded from a link)
 	OriginalURL string `json:"original_url"`
 	//LocalName is the name given on storing
