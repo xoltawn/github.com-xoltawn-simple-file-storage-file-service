@@ -55,4 +55,22 @@ func TestDownloadFromTextFile(t *testing.T) {
 		assert.Equal(t, expRes, res)
 	})
 
+	t.Run("if no err occures, return empty response with nil err", func(t *testing.T) {
+		//arrange
+		req := &_filepb.DownloadFromTextFileRequest{}
+
+		bytesToLinksConvertor := _mocks.NewMockBytesToLinksConvertor(ctrl)
+		bytesToLinksConvertor.EXPECT().Convert(gomock.Any()).Return(nil, nil)
+		fileUsecase := _mocks.NewMockFileUsecase(ctrl)
+		fileUsecase.EXPECT().SaveMutltipleFiles(context.TODO(), gomock.Any()).Return(nil)
+
+		//act
+		sut := _grpc.NewFileGRPCHandler(fileUsecase, bytesToLinksConvertor)
+		res, err := sut.DownloadFromTextFile(context.TODO(), req)
+
+		//assert
+		assert.NoError(t, err)
+		assert.Equal(t, expRes, res)
+	})
+
 }
