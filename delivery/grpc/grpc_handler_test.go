@@ -96,4 +96,51 @@ func TestFetchFiles(t *testing.T) {
 		assert.Equal(t, sampleErr, err)
 		assert.Equal(t, expRes, res)
 	})
+
+	t.Run("if FetchFiles in usecase returns no err, return requested files in response with nil err", func(t *testing.T) {
+		//arrange
+		files := []domain.File{
+			{
+				OriginalURL:   "OriginalUrl1",
+				LocalName:     "LocalName1",
+				FileExtension: "gif",
+				FileSize:      1,
+				CreatedAt:     "CreatedAt1",
+			},
+			{
+				OriginalURL:   "OriginalUrl2",
+				LocalName:     "LocalName2",
+				FileExtension: "png",
+				FileSize:      2,
+				CreatedAt:     "CreatedAt2",
+			},
+		}
+
+		req := &_filepb.FetchFilesRequest{}
+		expFiles := []*_filepb.File{}
+		for _, file := range files {
+			pfFile := &_filepb.File{
+				OriginalUrl:   file.OriginalURL,
+				LocalName:     file.LocalName,
+				FileExtension: file.FileExtension,
+				FileSize:      file.FileSize,
+				CreatedAt:     file.CreatedAt,
+			}
+			expFiles = append(expFiles, pfFile)
+		}
+		expRes := &_filepb.FetchFilesResponse{
+			Files: expFiles,
+		}
+
+		fileUsecase := _mocks.NewMockFileUsecase(ctrl)
+		fileUsecase.EXPECT().FetchFiles(context.TODO(), gomock.Any(), gomock.Any()).Return(files, nil)
+
+		//act
+		sut := _grpc.NewFileGRPCHandler(fileUsecase, nil)
+		res, err := sut.FetchFiles(context.TODO(), req)
+
+		//assert
+		assert.NoError(t, err)
+		assert.Equal(t, expRes, res)
+	})
 }

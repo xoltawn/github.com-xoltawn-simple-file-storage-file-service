@@ -41,8 +41,25 @@ func (h *fileGRPCHandler) DownloadFromTextFile(ctx context.Context, req *_filepb
 	return &_filepb.DownloadFromTextFileResponse{}, err
 }
 func (h *fileGRPCHandler) FetchFiles(ctx context.Context, req *_filepb.FetchFilesRequest) (res *_filepb.FetchFilesResponse, err error) {
-	_, err = h.fileUsecase.FetchFiles(ctx, int(req.Limit), int(req.Offset))
-	return &_filepb.FetchFilesResponse{}, err
+	files, err := h.fileUsecase.FetchFiles(ctx, int(req.Limit), int(req.Offset))
+	if err != nil {
+		return &_filepb.FetchFilesResponse{}, err
+	}
+
+	expFiles := []*_filepb.File{}
+	for _, file := range files {
+		pfFile := &_filepb.File{
+			OriginalUrl:   file.OriginalURL,
+			LocalName:     file.LocalName,
+			FileExtension: file.FileExtension,
+			FileSize:      file.FileSize,
+			CreatedAt:     file.CreatedAt,
+		}
+		expFiles = append(expFiles, pfFile)
+	}
+	return &_filepb.FetchFilesResponse{
+		Files: expFiles,
+	}, err
 
 }
 func (h *fileGRPCHandler) UploadFile(context.Context, *_filepb.UploadFileRequest) (res *_filepb.UploadFileResponse, err error) {
