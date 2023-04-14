@@ -144,3 +144,11 @@ func TestFetchFiles(t *testing.T) {
 		assert.Equal(t, expRes, res)
 	})
 }
+
+func TestUploadFile(t *testing.T) {
+
+	t.Run("", func(t *testing.T) {
+
+	})
+
+}

@@ -62,6 +62,6 @@ func (h *fileGRPCHandler) FetchFiles(ctx context.Context, req *_filepb.FetchFile
 	}, err
 
 }
-func (h *fileGRPCHandler) UploadFile(context.Context, *_filepb.UploadFileRequest) (res *_filepb.UploadFileResponse, err error) {
+func (h *fileGRPCHandler) UploadFile(ctx context.Context, req *_filepb.UploadFileRequest) (res *_filepb.UploadFileResponse, err error) {
 	return
 }

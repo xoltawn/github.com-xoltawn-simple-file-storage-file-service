@@ -32,14 +32,6 @@ func NewFileUsecase(
 
 func (f *fileUsecase) SaveFile(ctx context.Context, fileBytes []byte, fileInfo *domain.File) (err error) {
 
-	err = f.fileDownloader.Download(&domain.FileWithBytes{
-		File: fileInfo,
-		Data: fileBytes,
-	})
-	if err != nil {
-		return
-	}
-
 	err = f.fileStorage.SaveFile(ctx, fileBytes, fileInfo, f.imagesPath)
 	if err != nil {
 		return

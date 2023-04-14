@@ -21,28 +21,13 @@ func TestSaveFile(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	fileBytes := []byte{}
 	file := domain.File{}
-	t.Run("if file downloader returns error, then return error", func(t *testing.T) {
-		//arrange
-		fileDownloader := _mocks.NewMockFileDownloader(ctrl)
-		fileDownloader.EXPECT().Download(gomock.Any()).Return(expErr)
-
-		//act
-		sut := usecase.NewFileUsecase(nil, nil, fileDownloader, imagesPath)
-		err := sut.SaveFile(context.TODO(), fileBytes, &file)
-
-		//assert
-		assert.Error(t, expErr, err)
-	})
 	t.Run("if saving file in file storage returns error, then return error", func(t *testing.T) {
 		//arrange
 		fileStorage := _mocks.NewMockFileStorage(ctrl)
 		fileStorage.EXPECT().SaveFile(context.TODO(), gomock.Any(), gomock.Any(), gomock.Any()).Return(expErr)
 
-		fileDownloader := _mocks.NewMockFileDownloader(ctrl)
-		fileDownloader.EXPECT().Download(gomock.Any()).Return(nil)
-
 		//act
-		sut := usecase.NewFileUsecase(fileStorage, nil, fileDownloader, imagesPath)
+		sut := usecase.NewFileUsecase(fileStorage, nil, nil, imagesPath)
 		err := sut.SaveFile(context.TODO(), fileBytes, &file)
 
 		//assert
@@ -55,11 +40,9 @@ func TestSaveFile(t *testing.T) {
 		fileStorage.EXPECT().SaveFile(context.TODO(), gomock.Any(), gomock.Any(), gomock.Any()).Return(nil)
 		fileRepo := _mocks.NewMockFileRepository(ctrl)
 		fileRepo.EXPECT().SaveFile(context.TODO(), gomock.Any()).Return(expErr)
-		fileDownloader := _mocks.NewMockFileDownloader(ctrl)
-		fileDownloader.EXPECT().Download(gomock.Any()).Return(nil)
 
 		//act
-		sut := usecase.NewFileUsecase(fileStorage, fileRepo, fileDownloader, imagesPath)
+		sut := usecase.NewFileUsecase(fileStorage, fileRepo, nil, imagesPath)
 		err := sut.SaveFile(context.TODO(), fileBytes, &file)
 
 		//assert
@@ -72,11 +55,9 @@ func TestSaveFile(t *testing.T) {
 		fileStorage.EXPECT().SaveFile(context.TODO(), gomock.Any(), gomock.Any(), gomock.Any()).Return(nil)
 		fileRepo := _mocks.NewMockFileRepository(ctrl)
 		fileRepo.EXPECT().SaveFile(context.TODO(), gomock.Any()).Return(nil)
-		fileDownloader := _mocks.NewMockFileDownloader(ctrl)
-		fileDownloader.EXPECT().Download(gomock.Any()).Return(nil)
 
 		//act
-		sut := usecase.NewFileUsecase(fileStorage, fileRepo, fileDownloader, imagesPath)
+		sut := usecase.NewFileUsecase(fileStorage, fileRepo, nil, imagesPath)
 		err := sut.SaveFile(context.TODO(), fileBytes, &file)
 
 		//assert
@@ -92,10 +73,8 @@ func TestFetchFiles(t *testing.T) {
 		//arrange
 		fileRepo := _mocks.NewMockFileRepository(ctrl)
 		fileRepo.EXPECT().FetchFiles(context.TODO(), gomock.Any(), gomock.Any()).Return([]domain.File{}, expErr)
-		fileDownloader := _mocks.NewMockFileDownloader(ctrl)
-		fileDownloader.EXPECT().Download(gomock.Any()).Return(nil).AnyTimes()
 		//act
-		sut := usecase.NewFileUsecase(nil, fileRepo, fileDownloader, imagesPath)
+		sut := usecase.NewFileUsecase(nil, fileRepo, nil, imagesPath)
 		resFiles, err := sut.FetchFiles(context.TODO(), limit, offset)
 
 		//assert
@@ -116,11 +95,9 @@ func TestFetchFiles(t *testing.T) {
 		}
 		fileRepo := _mocks.NewMockFileRepository(ctrl)
 		fileRepo.EXPECT().FetchFiles(context.TODO(), gomock.Any(), gomock.Any()).Return(expFiles, nil)
-		fileDownloader := _mocks.NewMockFileDownloader(ctrl)
-		fileDownloader.EXPECT().Download(gomock.Any()).Return(nil).AnyTimes()
 
 		//act
-		sut := usecase.NewFileUsecase(nil, fileRepo, fileDownloader, imagesPath)
+		sut := usecase.NewFileUsecase(nil, fileRepo, nil, imagesPath)
 		resFiles, err := sut.FetchFiles(context.TODO(), limit, offset)
 
 		//assert
