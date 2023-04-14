@@ -24,7 +24,7 @@ func (h *fileGRPCHandler) DownloadFromTextFile(ctx context.Context, req *_filepb
 
 	links, err := h.bytesToLinksConvertor.Convert(req.Links)
 	if err != nil {
-		return
+		return &_filepb.DownloadFromTextFileResponse{}, err
 	}
 
 	filesWithByte := []*domain.FileWithBytes{}
@@ -38,7 +38,7 @@ func (h *fileGRPCHandler) DownloadFromTextFile(ctx context.Context, req *_filepb
 	}
 
 	err = h.fileUsecase.SaveMutltipleFiles(ctx, filesWithByte)
-	return &_filepb.DownloadFromTextFileResponse{}, nil
+	return &_filepb.DownloadFromTextFileResponse{}, err
 }
 func (h *fileGRPCHandler) FetchFiles(context.Context, *_filepb.FetchFilesRequest) (res *_filepb.FetchFilesResponse, err error) {
 	return
