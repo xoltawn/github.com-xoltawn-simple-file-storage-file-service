@@ -5,4 +5,4 @@ The file service for simple-file-storage repository
 ##todos
 - [x] concurrency for downloading
 - [ ] recover panics
-- [ ] images quality check
+- [x] images quality check

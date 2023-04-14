@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"io"
 	"net/http"
 	"strconv"
 	"strings"
@@ -23,10 +24,17 @@ func (d *fileDownloader) Download(file *domain.FileWithBytes) (err error) {
 	}
 	defer resp.Body.Close()
 
-	bytes := make([]byte, resp.ContentLength)
-	_, err = resp.Body.Read(bytes)
-	if err != nil {
-		return err
+	var bytes []byte
+	for {
+		chunk := make([]byte, 1024) // Read in 1KB chunks
+		n, err := resp.Body.Read(chunk)
+		if err != nil && err != io.EOF {
+			return err
+		}
+		bytes = append(bytes, chunk[:n]...)
+		if n == 0 {
+			break // Reached end of file
+		}
 	}
 
 	(*file).Data = bytes
