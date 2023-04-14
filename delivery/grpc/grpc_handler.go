@@ -70,5 +70,13 @@ func (h *fileGRPCHandler) UploadFile(ctx context.Context, req *_filepb.UploadFil
 	if err != nil {
 		return &_filepb.UploadFileResponse{}, err
 	}
-	return &_filepb.UploadFileResponse{}, err
+	return &_filepb.UploadFileResponse{
+		File: &_filepb.File{
+			OriginalUrl:   fileInfo.OriginalURL,
+			LocalName:     fileInfo.LocalName,
+			FileExtension: fileInfo.FileExtension,
+			FileSize:      fileInfo.FileSize,
+			CreatedAt:     fileInfo.CreatedAt,
+		},
+	}, err
 }

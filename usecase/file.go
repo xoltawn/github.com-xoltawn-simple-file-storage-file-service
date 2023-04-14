@@ -3,6 +3,8 @@ package usecase
 import (
 	"context"
 	"log"
+	"net/http"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -31,6 +33,13 @@ func NewFileUsecase(
 }
 
 func (f *fileUsecase) SaveFile(ctx context.Context, fileBytes []byte, fileInfo *domain.File, path string) (err error) {
+	(*fileInfo).LocalName = uuid.NewString()
+	_, extension, ok := strings.Cut(http.DetectContentType(fileBytes), "/")
+	if !ok {
+		return domain.ErrFileExtensionNotSupported
+	}
+	(*fileInfo).FileExtension = extension
+	(*fileInfo).FileSize = int64(len(fileBytes))
 
 	err = f.fileStorage.SaveFile(ctx, fileBytes, fileInfo, path)
 	if err != nil {
