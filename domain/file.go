@@ -28,7 +28,7 @@ type File struct {
 
 // FileWithBytes contains File struct and also []byte of the file that contains the file content
 type FileWithBytes struct {
-	File
+	*File
 	Data []byte
 }
 

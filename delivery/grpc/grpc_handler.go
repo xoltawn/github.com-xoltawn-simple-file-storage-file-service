@@ -31,14 +31,14 @@ func (h *fileGRPCHandler) DownloadFromTextFile(ctx context.Context, req *_filepb
 
 	for _, l := range links {
 		filesWithByte = append(filesWithByte, &domain.FileWithBytes{
-			File: domain.File{
+			File: &domain.File{
 				OriginalURL: l,
 			},
 		})
 	}
 
 	err = h.fileUsecase.SaveMutltipleFiles(ctx, filesWithByte)
-	return
+	return &_filepb.DownloadFromTextFileResponse{}, nil
 }
 func (h *fileGRPCHandler) FetchFiles(context.Context, *_filepb.FetchFilesRequest) (res *_filepb.FetchFilesResponse, err error) {
 	return

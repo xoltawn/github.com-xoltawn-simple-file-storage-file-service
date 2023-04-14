@@ -23,7 +23,8 @@ func (s *localstorage) SaveFile(ctx context.Context, fileBytes []byte, fileInfo 
 		return
 	}
 
-	err = os.WriteFile(fmt.Sprint(path, "/", fileInfo.LocalName, ".", fileInfo.FileExtension), fileBytes, 0644)
+	path = fmt.Sprint(path, "/", fileInfo.LocalName, ".", fileInfo.FileExtension)
+	err = os.WriteFile(path, fileBytes, 0644)
 	if err != nil {
 		return
 	}

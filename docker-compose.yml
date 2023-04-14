@@ -3,8 +3,8 @@ version: '3.8'
 services:
   pg-0:
     restart: unless-stopped
-    # ports:
-    #   - '5434:5432'
+    ports:
+      - '5434:5432'
     environment:
       - "REPMGR_PARTNER_NODES=${REPMGR_PARTNER_NODES}"
       - "REPMGR_NODE_NAME=${REPMGR_NODE_NAME}"
@@ -27,7 +27,8 @@ services:
       - pg-0
     volumes:
       - '.env:/.env'
-
+    ports:
+        - '50051:50051'
 networks:
   simple-file-storage:
     driver: bridge

@@ -33,7 +33,7 @@ func NewFileUsecase(
 func (f *fileUsecase) SaveFile(ctx context.Context, fileBytes []byte, fileInfo *domain.File) (err error) {
 
 	err = f.fileDownloader.Download(&domain.FileWithBytes{
-		File: *fileInfo,
+		File: fileInfo,
 		Data: fileBytes,
 	})
 	if err != nil {
@@ -69,15 +69,19 @@ func (f *fileUsecase) SaveMutltipleFiles(ctx context.Context, filesWithByte []*d
 		}
 	}
 
-	files := make([]*domain.File, len(filesWithByte))
+	files := []*domain.File{}
 	for _, fileInfo := range filesWithByte {
-		err = f.fileStorage.SaveFile(ctx, fileInfo.Data, &fileInfo.File, f.imagesPath)
+		(*fileInfo).LocalName = uuid.NewString()
+		err = f.fileStorage.SaveFile(ctx, fileInfo.Data, fileInfo.File, f.imagesPath)
 		if err != nil {
 			return
 		}
 
 		(*fileInfo).CreatedAt = time.Now().UTC().String()
-		(*fileInfo).LocalName = uuid.NewString()
+		f := ((*fileInfo).File)
+		if f != nil {
+			files = append(files, f)
+		}
 	}
 
 	err = f.fileRepo.SaveMutltipleFiles(ctx, files)
